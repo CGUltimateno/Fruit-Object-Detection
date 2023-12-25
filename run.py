@@ -1,14 +1,9 @@
-# run_with_gui.py
 import tkinter as tk
 from tkinter import filedialog
 from PIL import Image, ImageTk
 import numpy as np
-import matplotlib.pyplot as plt
 from keras.preprocessing import image
-from keras.preprocessing.image import ImageDataGenerator
 import tensorflow as tf
-from sklearn.metrics import confusion_matrix
-import seaborn as sns
 from custommodel import build_custom_model
 
 
@@ -52,7 +47,7 @@ def browse_image():
 test_dir, batch_size = build_custom_model()
 
 # Load the trained model
-loaded_model = tf.keras.models.load_model("model_custom.h5")
+loaded_model = tf.keras.models.load_model("model_custom.keras")
 
 # Define the classes
 classes = ['apple', 'orange', 'banana', 'grape', 'watermelon']

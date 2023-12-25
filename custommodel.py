@@ -52,6 +52,6 @@ def build_custom_model():
     history = model.fit(train_generator, epochs=epochs)
 
     # Save the trained model
-    model.save("model_custom.h5")
+    model.save("model_custom.keras")
 
     return test_dir, batch_size
