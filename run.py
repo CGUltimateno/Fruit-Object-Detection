@@ -1,21 +1,15 @@
-# run.py
-import tensorflow as tf
-from keras.preprocessing import image
-from keras.preprocessing.image import ImageDataGenerator
+# run_with_gui.py
+import tkinter as tk
+from tkinter import filedialog
+from PIL import Image, ImageTk
 import numpy as np
 import matplotlib.pyplot as plt
+from keras.preprocessing import image
+from keras.preprocessing.image import ImageDataGenerator
+import tensorflow as tf
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
 from custommodel import build_custom_model
-
-# Build and train the custom model
-test_dir, batch_size = build_custom_model()
-
-# Load the trained model
-loaded_model = tf.keras.models.load_model("model_custom.h5")
-
-# Define the classes
-classes = ['apple', 'orange', 'banana', 'grape', 'watermelon']
 
 
 # Function to preprocess an input image
@@ -37,40 +31,45 @@ def predict_fruit(image_path):
     return predicted_class, confidence
 
 
-# Load test data
-test_datagen = ImageDataGenerator(rescale=1. / 255)
-test_generator = test_datagen.flow_from_directory(
-    test_dir,
-    target_size=(128, 128),
-    batch_size=batch_size,
-    class_mode='categorical',
-    classes=classes,
-    shuffle=False
-)
+# Function to handle the button click event
+def browse_image():
+    file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.png;*.jpg;*.jpeg")])
+    if file_path:
+        # Perform object detection on the selected image
+        predicted_class, confidence = predict_fruit(file_path)
 
-# Predict on the test data
-y_pred = loaded_model.predict(test_generator)
-y_true = test_generator.classes
+        # Display the result
+        img = Image.open(file_path)
+        img = img.resize((128, 128), Image.ANTIALIAS)
+        img = ImageTk.PhotoImage(img)
 
-# Get class labels
-class_labels = list(test_generator.class_indices.keys())
+        result_label.config(text=f"Predicted: {predicted_class} ({confidence:.2f})")
+        image_label.config(image=img)
+        image_label.image = img
 
-# Generate confusion matrix
-cm = confusion_matrix(y_true, np.argmax(y_pred, axis=1))
 
-# Plot confusion matrix
-plt.figure(figsize=(8, 6))
-sns.heatmap(cm, annot=True, fmt='g', cmap='Blues', xticklabels=class_labels, yticklabels=class_labels)
-plt.xlabel('Predicted')
-plt.ylabel('True')
-plt.title('Confusion Matrix')
-plt.show()
+# Build and train the custom model
+test_dir, batch_size = build_custom_model()
 
-# testing
-image_path = "test.jpeg"
-predicted_class, confidence = predict_fruit(image_path)
+# Load the trained model
+loaded_model = tf.keras.models.load_model("model_custom.h5")
 
-# Display the result
-plt.imshow(image.load_img(image_path, target_size=(128, 128)))
-plt.title(f"Predicted: {predicted_class} ({confidence:.2f})")
-plt.show()
+# Define the classes
+classes = ['apple', 'orange', 'banana', 'grape', 'watermelon']
+
+# Create the main window
+root = tk.Tk()
+root.title("Fruit Object Detection")
+
+# Create GUI components
+browse_button = tk.Button(root, text="Browse Image", command=browse_image)
+browse_button.pack(pady=10)
+
+result_label = tk.Label(root, text="")
+result_label.pack(pady=10)
+
+image_label = tk.Label(root)
+image_label.pack()
+
+# Start the Tkinter event loop
+root.mainloop()
