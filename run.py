@@ -1,9 +1,13 @@
+import os
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 import tkinter as tk
 from tkinter import filedialog
 from PIL import Image, ImageTk
 import numpy as np
 from keras.preprocessing import image
 import tensorflow as tf
+
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 from custommodel import build_custom_model
 
 
