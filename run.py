@@ -51,7 +51,7 @@ def browse_image():
 test_dir, batch_size = build_custom_model()
 
 # Load the trained model
-loaded_model = tf.keras.models.load_model("model_custom.keras")
+loaded_model = tf.keras.models.load_model("fruit_model.keras")
 
 # Define the classes
 classes = ['apple', 'orange', 'banana', 'grape', 'watermelon']
